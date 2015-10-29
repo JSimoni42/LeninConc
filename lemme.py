@@ -1,7 +1,6 @@
 import pymorphy2
 import json
 import datetime
-#import time
 
 class lemme:
     '''filename'''
@@ -40,33 +39,15 @@ class lemme:
     def addHyphenWord(self, word):
         output = [word]
         wordParts = word.split('-')
-
-        # if len(wordParts) == 3:
-        #     last = wordParts[-1]
-        #     wordParts = wordParts[:-1]
-        #     last_normal = self.morph.parse(last)[0].normal_form
-        #     third_word = True
-
         valid_check = self.validHyphCheck(wordParts)
         valid_parts = valid_check[1]
         whole_valid = valid_check[0]
-        #third_word = False
+
         if not whole_valid:
             output.append("XXX")
         else:
             output.append(self.lemmaHyphen(wordParts))
         gram_index = 2 #index before which to insert gram information
-        # for i in range(len(valid_parts)):
-        #     if valid_parts[i] == "": #word is valid, produce grammatical info
-        #         guess = self.morph.parse(wordParts[i])[0]
-        #         gram = self.getGram(guess)
-        #         normal = guess.normal_form.upper()
-        #     else:
-        #         gram = valid_parts[i]
-        #         normal = wordParts[i]
-        #     output.insert(gram_index, gram)
-        #     output.append(normal)
-        #     gram_index += 1
         for i in range(3):
             if i < len(wordParts):
                 if valid_parts[i] == "": #word is valid, produce grammatical info
@@ -82,9 +63,6 @@ class lemme:
             output.insert(gram_index, gram)
             output.append(normal)
             gram_index += 1
-
-        # if third_word:
-        #     output.append(last_normal)
         self.lemmesHyphen.append(output)
 
     '''Input: parts of hyphenated word, split on the '-'
@@ -123,7 +101,5 @@ class lemme:
         else:
             self.lemmes.append([word, word, "XXX"])
 
-##start_time = time.time()
 lemme1 = lemme("LVocabUCyrOnly.txt")
 lemme1.produce_lemmes()
-##print(time.time() - start_time, "seconds")
