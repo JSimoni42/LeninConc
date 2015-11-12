@@ -85,13 +85,38 @@ class lemme:
     '''Input: Parts of a hyphenated word, all of which are valid
     Output: lemmas of those parts, hyphenated together'''
     def lemmaHyphen(self, wordParts):
-        guess_tail = self.morph.parse(wordParts[-1])[0]
-        lemma_tail = guess_tail.normal_form.upper()
-        new_parts = wordParts[:-1]
-        new_parts.append(lemma_tail)
+        lemmas = ""
+        new_parts = []
+        if len(wordParts) == 2:
+            if self.multi_noun(wordParts):
+                print("multi_noun!")
+                for part in wordParts:
+                    guess = self.morph.parse(part)[0]
+                    lemma = guess.normal_form.upper()
+                    new_parts.append(lemma)
+        else:
+            guess_tail = self.morph.parse(wordParts[-1])[0]
+            lemma_tail = guess_tail.normal_form.upper()
+            new_parts = wordParts[:-1]
+            new_parts.append(lemma_tail)
         lemmas = "-".join(new_parts)
         return lemmas
 
+    '''Input: All parts of a hyphenated word, all of which are valid
+    Output: True if all parts are nouns, False otherwise'''
+    def multi_noun(self, wordParts):
+        for part in wordParts:
+            guess = self.morph.parse(part)[0]
+            if 'NOUN' not in guess.tag:
+                return False
+        return True
+
+    '''Input: both parts of a 2-part hyphenated word, all of which are valid
+    Output: True if both parts are nouns, False otherwise'''
+    def double_noun(self, wordParts):
+        guess_head = self.morph.parse(wordParts[0])[0]
+        guess_tail = self.morph.parse(wordParts[1])[0]
+        return 'NOUN' in guess_head.tag and 'NOUN' in guess_tail.tag
 
     '''Adds words to lemme list'''
     def addWord(self, word):
